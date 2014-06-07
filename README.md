@@ -12,9 +12,10 @@ android crash 是我写的一个Android程序崩溃信息处理框架。通过�
     CrashEmailReport report = new CrashEmailReport(this);
     report.setReceiver("log@msdx.pw");
     report.setSender("irain_log@163.com");
-    report.setPass("xxxxxxxx");
+    report.setSendPassword("xxxxxxxx");
     report.setHost("smtp.163.com");
     report.setPort("465");
+    report.start();
 ```
 
 注意：发送邮件需依赖三个包，分别是：activation.jar, additionnal.jar, mail.jar。可以从项目的libs文件夹中获取。

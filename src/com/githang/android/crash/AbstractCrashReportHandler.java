@@ -41,11 +41,23 @@ public abstract class AbstractCrashReportHandler implements CrashListener {
     public AbstractCrashReportHandler(Context context) {
         mContext = context;
         CrashHandler handler = CrashHandler.getInstance();
-        handler.init(getLogDir(context), this);
-        Thread.setDefaultUncaughtExceptionHandler(handler);
+        final File file = getLogFile(context);
+        handler.init(file, this);
+        if(file.length() > 10) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                 sendReport(buildTitle(mContext), buildBody(mContext), file);   
+                }
+            }).start();
+        }
+    }
+    
+    public void start() {
+        Thread.setDefaultUncaughtExceptionHandler(CrashHandler.getInstance());
     }
 
-    protected File getLogDir(Context context) {
+    protected File getLogFile(Context context) {
         return new File(context.getFilesDir(), "crash.log");
     }
 

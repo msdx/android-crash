@@ -58,7 +58,7 @@ public abstract class AbstractCrashReportHandler implements CrashListener {
     }
 
     protected File getLogFile(Context context) {
-        return new File(context.getFilesDir(), "crash.log");
+        return new File(context.getFilesDir(), "crashlog.txt");
     }
 
     protected abstract void sendReport(String title, String body, File file);

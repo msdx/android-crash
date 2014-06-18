@@ -41,6 +41,10 @@ public class CrashEmailReport extends AbstractCrashReportHandler {
     public CrashEmailReport(Context context) {
         super(context);
     }
+    
+    public CrashEmailReport(Context context, String logName) {
+        super(context, logName);
+    }
 
     public void setReceiver(String receiveEmail) {
         mReceiveEmail = receiveEmail;

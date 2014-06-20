@@ -35,12 +35,14 @@ import javax.mail.BodyPart;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
+import javax.mail.Provider.Type;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.MimeUtility;
 
 /**
  * Author: msdx (645079761@qq.com) Time: 14-5-27 上午9:07
@@ -154,7 +156,8 @@ public class LogMail extends Authenticator {
             // setup message body
             BodyPart messageBodyPart = new MimeBodyPart();
             messageBodyPart.setText(body);
-            multipart.addBodyPart(messageBodyPart);
+            
+            multipart.addBodyPart(messageBodyPart, 0);
 
             // Put parts in message
             msg.setContent(multipart);
@@ -170,9 +173,7 @@ public class LogMail extends Authenticator {
 
     public void addAttachment(String filePath, String fileName) throws Exception {
         BodyPart messageBodyPart = new MimeBodyPart();
-        DataSource source = new FileDataSource(filePath);
-        messageBodyPart.setDataHandler(new DataHandler(source));
-        messageBodyPart.setFileName(fileName);
+        ((MimeBodyPart)messageBodyPart).attachFile(filePath);
         multipart.addBodyPart(messageBodyPart);
     }
 

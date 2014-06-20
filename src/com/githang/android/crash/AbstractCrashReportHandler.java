@@ -38,8 +38,15 @@ import android.os.Build;
 public abstract class AbstractCrashReportHandler implements CrashListener {
     private Context mContext;
 
+    private String mLogName;
+    
     public AbstractCrashReportHandler(Context context) {
+        this(context, "crashlog.txt");
+    }
+    
+    public AbstractCrashReportHandler(Context context, String logName) {
         mContext = context;
+        mLogName = logName;
         CrashHandler handler = CrashHandler.getInstance();
         final File file = getLogFile(context);
         handler.init(file, this);
@@ -58,7 +65,7 @@ public abstract class AbstractCrashReportHandler implements CrashListener {
     }
 
     protected File getLogFile(Context context) {
-        return new File(context.getFilesDir(), "crashlog.txt");
+        return new File(context.getFilesDir(), mLogName);
     }
 
     protected abstract void sendReport(String title, String body, File file);

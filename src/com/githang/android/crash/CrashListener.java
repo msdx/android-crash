@@ -23,6 +23,8 @@ package com.githang.android.crash;
 import java.io.File;
 
 /**
+ * 崩溃监听。
+ * 
  * @author Geek_Soledad <a target="_blank" href=
  *         "http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=XTAuOSVzPDM5LzI0OR0sLHM_MjA"
  *         style="text-decoration:none;"><img src=
@@ -31,9 +33,10 @@ import java.io.File;
  */
 public interface CrashListener {
     /**
-     * 保存异常的日志。
+     * 保存完日志之后的回调方法
      * 
      * @param file
+     *            保存异常的日志
      */
     public void afterSaveCrash(File file);
 }

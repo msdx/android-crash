@@ -20,32 +20,33 @@
  */
 package com.githang.android.crash;
 
-import android.util.Log;
-
 import java.util.Date;
 import java.util.Properties;
 
 import javax.activation.CommandMap;
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
 import javax.activation.MailcapCommandMap;
 import javax.mail.Authenticator;
 import javax.mail.BodyPart;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
-import javax.mail.Provider.Type;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import javax.mail.internet.MimeUtility;
+
+import android.util.Log;
 
 /**
- * Author: msdx (645079761@qq.com) Time: 14-5-27 上午9:07
+ * 邮件类，用于构造要发送的邮件。
+ * 
+ * @author Geek_Soledad <a target="_blank" href=
+ *         "http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=XTAuOSVzPDM5LzI0OR0sLHM_MjA"
+ *         style="text-decoration:none;"><img src=
+ *         "http://rescdn.qqmail.com/zh_CN/htmledition/images/function/qm_open/ico_mailme_01.png"
+ *         /></a>
  */
 public class LogMail extends Authenticator {
     private String host;
@@ -63,6 +64,24 @@ public class LogMail extends Authenticator {
     public LogMail() {
     }
 
+    /**
+     * @param user
+     *            邮箱登录名
+     * @param pass
+     *            邮箱登录密码
+     * @param from
+     *            发件人
+     * @param to
+     *            收件人
+     * @param host
+     *            主机
+     * @param port
+     *            SMTP端口号
+     * @param subject
+     *            邮件主题
+     * @param body
+     *            邮件正文
+     */
     public LogMail(String user, String pass, String from, String to, String host, String port,
             String subject, String body) {
         this.host = host;
@@ -115,6 +134,9 @@ public class LogMail extends Authenticator {
         return this;
     }
 
+    /**
+     * 初始化。它在设置好用户名、密码、发件人、收件人、主题、正文、主机及端口号之后显示调用。
+     */
     public void init() {
         multipart = new MimeMultipart();
         // There is something wrong with MailCap, javamail can not find a
@@ -138,6 +160,12 @@ public class LogMail extends Authenticator {
         props.put("mail.smtp.socketFactory.fallback", "false");
     }
 
+    /**
+     * 发送邮件
+     * 
+     * @return 是否发送成功
+     * @throws MessagingException
+     */
     public boolean send() throws MessagingException {
         if (!user.equals("") && !pass.equals("") && !to.equals("") && !from.equals("")) {
             Session session = Session.getDefaultInstance(props, this);
@@ -156,7 +184,7 @@ public class LogMail extends Authenticator {
             // setup message body
             BodyPart messageBodyPart = new MimeBodyPart();
             messageBodyPart.setText(body);
-            
+
             multipart.addBodyPart(messageBodyPart, 0);
 
             // Put parts in message
@@ -171,9 +199,18 @@ public class LogMail extends Authenticator {
         }
     }
 
+    /**
+     * 添加附件
+     * 
+     * @param filePath
+     *            附件路径
+     * @param fileName
+     *            附件名称
+     * @throws Exception
+     */
     public void addAttachment(String filePath, String fileName) throws Exception {
         BodyPart messageBodyPart = new MimeBodyPart();
-        ((MimeBodyPart)messageBodyPart).attachFile(filePath);
+        ((MimeBodyPart) messageBodyPart).attachFile(filePath);
         multipart.addBodyPart(messageBodyPart);
     }
 

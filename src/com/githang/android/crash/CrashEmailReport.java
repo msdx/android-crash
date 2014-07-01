@@ -25,6 +25,8 @@ import java.io.File;
 import android.content.Context;
 
 /**
+ * 已经实现的日志报告类，这里通过邮件方式发送日志报告
+ * 
  * @author Geek_Soledad <a target="_blank" href=
  *         "http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=XTAuOSVzPDM5LzI0OR0sLHM_MjA"
  *         style="text-decoration:none;"><img src=
@@ -41,27 +43,52 @@ public class CrashEmailReport extends AbstractCrashReportHandler {
     public CrashEmailReport(Context context) {
         super(context);
     }
-    
+
     public CrashEmailReport(Context context, String logName) {
         super(context, logName);
     }
 
+    /**
+     * 设置接收者
+     * 
+     * @param receiveEmail
+     */
     public void setReceiver(String receiveEmail) {
         mReceiveEmail = receiveEmail;
     }
 
+    /**
+     * 设置发送者邮箱
+     * 
+     * @param email
+     */
     public void setSender(String email) {
         mSendEmail = email;
     }
 
+    /**
+     * 设置发送者密码
+     * 
+     * @param password
+     */
     public void setSendPassword(String password) {
         mSendPassword = password;
     }
 
+    /**
+     * 设置SMTP 主机
+     * 
+     * @param host
+     */
     public void setSMTPHost(String host) {
         mHost = host;
     }
 
+    /**
+     * 设置端口
+     * 
+     * @param port
+     */
     public void setPort(String port) {
         mPort = port;
     }

@@ -29,6 +29,8 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 
 /**
+ * 抽象的日志报告类
+ * 
  * @author Geek_Soledad <a target="_blank" href=
  *         "http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=XTAuOSVzPDM5LzI0OR0sLHM_MjA"
  *         style="text-decoration:none;"><img src=
@@ -39,35 +41,52 @@ public abstract class AbstractCrashReportHandler implements CrashListener {
     private Context mContext;
 
     private String mLogName;
-    
+
     public AbstractCrashReportHandler(Context context) {
         this(context, "crashlog.txt");
     }
-    
+
+    /**
+     * 构造方法
+     * @param context
+     * @param logName 保存日志的文件名
+     */
     public AbstractCrashReportHandler(Context context, String logName) {
         mContext = context;
         mLogName = logName;
         CrashHandler handler = CrashHandler.getInstance();
         final File file = getLogFile(context);
         handler.init(file, this);
-        if(file.length() > 10) {
+        
+    }
+
+    public void start() {
+        Thread.setDefaultUncaughtExceptionHandler(CrashHandler.getInstance());
+        final File file = getLogFile(mContext);
+        if (file.length() > 10) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                 sendReport(buildTitle(mContext), buildBody(mContext), file);   
+                    sendReport(buildTitle(mContext), buildBody(mContext), file);
                 }
             }).start();
         }
-    }
-    
-    public void start() {
-        Thread.setDefaultUncaughtExceptionHandler(CrashHandler.getInstance());
     }
 
     protected File getLogFile(Context context) {
         return new File(context.getFilesDir(), mLogName);
     }
 
+    /**
+     * 发送报告
+     * 
+     * @param title
+     *            报告标题
+     * @param body
+     *            报告正文，为设备信息及安装包的版本信息
+     * @param file
+     *            崩溃日志
+     */
     protected abstract void sendReport(String title, String body, File file);
 
     @Override
@@ -75,11 +94,23 @@ public abstract class AbstractCrashReportHandler implements CrashListener {
         sendReport(buildTitle(mContext), buildBody(mContext), file);
     }
 
+    /**
+     * 构建标题
+     * 
+     * @param context
+     * @return
+     */
     public String buildTitle(Context context) {
         return "Crash Log: "
                 + context.getPackageManager().getApplicationLabel(context.getApplicationInfo());
     }
 
+    /**
+     * 构建正文
+     * 
+     * @param context
+     * @return
+     */
     public String buildBody(Context context) {
         StringBuilder sb = new StringBuilder();
 

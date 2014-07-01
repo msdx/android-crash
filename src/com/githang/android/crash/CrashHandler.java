@@ -28,6 +28,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 崩溃处理者。
+ * 
  * @author Geek_Soledad <a target="_blank" href=
  *         "http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=XTAuOSVzPDM5LzI0OR0sLHM_MjA"
  *         style="text-decoration:none;"><img src=
@@ -42,6 +44,10 @@ public class CrashHandler implements UncaughtExceptionHandler {
     private Future<?> future;
     private CrashListener mListener;
     private File mLogFile;
+    /**
+     * 发送报告的超时时间。
+     */
+    protected int timeout = 5;
 
     public static CrashHandler getInstance() {
         return sHandler;
@@ -49,7 +55,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
 
     @Override
     public void uncaughtException(Thread thread, Throwable ex) {
-        if(future != null && !future.isDone()) {
+        if (future != null && !future.isDone()) {
             future.cancel(true);
         }
         CrashLogUtil.writeLog(mLogFile, "CrashHandler", ex.getMessage(), ex);
@@ -62,7 +68,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
         });
         if (!future.isDone()) {
             try {
-                future.get(5, TimeUnit.SECONDS);
+                future.get(timeout, TimeUnit.SECONDS);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -70,18 +76,17 @@ public class CrashHandler implements UncaughtExceptionHandler {
         sDefaultHandler.uncaughtException(thread, ex);
     }
 
+    /**
+     * 初始化日志文件及CrashListener对象
+     * 
+     * @param logFile
+     *            保存日志的文件
+     * @param listener
+     *            回调接口
+     */
     public void init(File logFile, CrashListener listener) {
         mLogFile = logFile;
         mListener = listener;
-        if(mLogFile.length() > 16) {
-            future = THREAD_POOL.submit(new Runnable() {
-                public void run() {
-                    if (mListener != null) {
-                        mListener.afterSaveCrash(mLogFile);
-                    }
-                };
-            });
-        }
     }
 
 }

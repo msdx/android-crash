@@ -26,12 +26,15 @@ Http post请求的方式：
 	CrashHttpReport report = new CrashHttpReport(this);
 	report.setUrl("http://crashreport.jd-app.com/ReportFile");
 	report.setTo("log@msdx.pw");
-	report.setToParam("to")
-	report.setTitleParam("subject")
-	report.setBodyParam("message")
-	report.setFileParam("fileName")
-	report.setCallback(  { status, string ->
-	    Log.d("test.....", status + string)
-	    return string.endsWith("ok")} as CrashHttpReport.HttpReportCallback)
-	report.start()
+	report.setToParam("to");
+	report.setTitleParam("subject");
+	report.setBodyParam("message");
+	report.setFileParam("fileName");
+	report.setCallback(new CrashHttpReport.HttpReportCallback() {
+            @Override
+            boolean isSuccess(int i, String s) {
+                return s.endsWith("ok")
+            }
+        });
+	report.start();
 ```

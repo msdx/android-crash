@@ -217,6 +217,6 @@ public class CrashHttpReport extends AbstractCrashReportHandler {
          *            返回的内容。
          * @return
          */
-        boolean isSuccess(int status, String content);
+        public boolean isSuccess(int status, String content);
     }
 }

@@ -5,7 +5,21 @@ android crash 是我写的一个Android程序崩溃信息处理框架。通过�
 
 在本框架中，我实现了邮件及HTTP POST请求的发送方式。如果要采用其他方式，可以继承AbstractCrashReportHandler类并实现其抽象方法。
 
-使用本框架的方法很简单，写一个类，继承自Application，并在AndroidManifest.xml中指定。然后在onCreate方法中添加如下代码：
+使用本框架的方法只需要两个步骤。
+1、添加依赖：
+在repository中添加jcenter。
+```groovy
+repository {
+   jcenter() // or mavenCentral()
+}
+```
+在dependencies中添加如下依赖。
+```groovy
+
+compile(group: 'com.githang', name: 'android-crash', version: '0.2.2')
+```
+
+2、写一个类，继承自Application，并在AndroidManifest.xml中指定。然后在onCreate方法中添加如下代码：
 
 客户端发送E-mail方式（需要添加activation.jar, additionnal.jar, mail.jar 这三个jar包，可以从本项目的libs文件夹中获取）
 

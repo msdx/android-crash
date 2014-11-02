@@ -8,8 +8,8 @@ android {
         applicationId "com.githang.androidcrash"
         minSdkVersion 7
         targetSdkVersion 21
-        versionCode 1
-        versionName "1.0"
+        versionCode 4
+        versionName "0.2.2"
     }
     buildTypes {
         release {

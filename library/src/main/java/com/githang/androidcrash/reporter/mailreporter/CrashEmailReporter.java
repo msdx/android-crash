@@ -18,11 +18,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.githang.androidcrash;
+package com.githang.androidcrash.reporter.mailreporter;
 
 import java.io.File;
 
 import android.content.Context;
+
+import com.githang.androidcrash.reporter.AbstractCrashHandler;
 
 /**
  * 已经实现的日志报告类，这里通过邮件方式发送日志报告
@@ -33,19 +35,15 @@ import android.content.Context;
  *         "http://rescdn.qqmail.com/zh_CN/htmledition/images/function/qm_open/ico_mailme_01.png"
  *         /></a>
  */
-public class CrashEmailReport extends AbstractCrashReportHandler {
+public class CrashEmailReporter extends AbstractCrashHandler {
     private String mReceiveEmail;
     private String mSendEmail;
     private String mSendPassword;
     private String mHost;
     private String mPort;
 
-    public CrashEmailReport(Context context) {
+    public CrashEmailReporter(Context context) {
         super(context);
-    }
-
-    public CrashEmailReport(Context context, String logName) {
-        super(context, logName);
     }
 
     /**

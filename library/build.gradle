@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.githang.androidcrash"
-        minSdkVersion 7
+        minSdkVersion 8
         targetSdkVersion 21
         versionCode 4
         versionName "0.2.2"

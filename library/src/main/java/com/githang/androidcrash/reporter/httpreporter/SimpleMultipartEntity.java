@@ -18,7 +18,7 @@
  * limitations under the License.  
  */
 
-package com.githang.androidcrash;
+package com.githang.androidcrash.reporter.httpreporter;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

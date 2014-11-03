@@ -18,7 +18,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.githang.androidcrash;
+package com.githang.androidcrash.log;
 
 import java.io.BufferedWriter;
 import java.io.Closeable;
@@ -37,7 +37,7 @@ import java.util.Locale;
  *         "http://rescdn.qqmail.com/zh_CN/htmledition/images/function/qm_open/ico_mailme_01.png"
  *         /></a>
  */
-public class CrashLogUtil {
+public class LogWriter {
     private static final SimpleDateFormat timeFormat = new SimpleDateFormat("MM-dd HH:mm:ss.SSS",
             Locale.getDefault());
 

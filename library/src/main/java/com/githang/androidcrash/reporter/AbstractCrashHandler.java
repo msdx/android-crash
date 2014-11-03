@@ -18,15 +18,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.githang.androidcrash;
-
-import java.io.File;
+package com.githang.androidcrash.reporter;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
+
+import com.githang.androidcrash.log.CrashListener;
+
+import java.io.File;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 抽象的日志报告类
@@ -37,44 +43,21 @@ import android.os.Build;
  *         "http://rescdn.qqmail.com/zh_CN/htmledition/images/function/qm_open/ico_mailme_01.png"
  *         /></a>
  */
-public abstract class AbstractCrashReportHandler implements CrashListener {
+public abstract class AbstractCrashHandler implements CrashListener {
+    /**
+     * 系统默认异常处理。
+     */
+    private static final Thread.UncaughtExceptionHandler sDefaultHandler = Thread
+            .getDefaultUncaughtExceptionHandler();
+
     private Context mContext;
 
-    private String mLogName;
+    private ExecutorService mSingleExecutor = Executors.newSingleThreadExecutor();
+    private Future mFuture;
+    private int TIMEOUT = 5;
 
-    public AbstractCrashReportHandler(Context context) {
-        this(context, "crashlog.txt");
-    }
-
-    /**
-     * 构造方法
-     * @param context
-     * @param logName 保存日志的文件名
-     */
-    public AbstractCrashReportHandler(Context context, String logName) {
+    public AbstractCrashHandler(Context context) {
         mContext = context;
-        mLogName = logName;
-        CrashHandler handler = CrashHandler.getInstance();
-        final File file = getLogFile(context);
-        handler.init(file, this);
-        
-    }
-
-    public void start() {
-        Thread.setDefaultUncaughtExceptionHandler(CrashHandler.getInstance());
-        final File file = getLogFile(mContext);
-        if (file.length() > 10) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    sendReport(buildTitle(mContext), buildBody(mContext), file);
-                }
-            }).start();
-        }
-    }
-
-    protected File getLogFile(Context context) {
-        return new File(context.getFilesDir(), mLogName);
     }
 
     /**
@@ -90,8 +73,16 @@ public abstract class AbstractCrashReportHandler implements CrashListener {
     protected abstract void sendReport(String title, String body, File file);
 
     @Override
-    public void afterSaveCrash(File file) {
-        sendReport(buildTitle(mContext), buildBody(mContext), file);
+    public void sendFile(final File file) {
+        if(mFuture != null && !mFuture.isDone()){
+            mFuture.cancel(false);
+        }
+        mFuture = mSingleExecutor.submit(new Runnable() {
+            @Override
+            public void run() {
+                sendReport(buildTitle(mContext), buildBody(mContext), file);
+            }
+        });
     }
 
     /**
@@ -146,5 +137,15 @@ public abstract class AbstractCrashReportHandler implements CrashListener {
         sb.append("USER: ").append(Build.USER).append('\n');
 
         return sb.toString();
+    }
+
+    @Override
+    public void closeApp(Thread thread, Throwable ex) {
+        try {
+            mFuture.get(TIMEOUT, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        sDefaultHandler.uncaughtException(thread, ex);
     }
 }

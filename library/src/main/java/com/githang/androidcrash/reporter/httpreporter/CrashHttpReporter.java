@@ -18,20 +18,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.githang.androidcrash;
+package com.githang.androidcrash.reporter.httpreporter;
 
-import java.io.File;
-import java.util.Map;
+import android.content.Context;
+
+import com.githang.androidcrash.reporter.AbstractCrashHandler;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.util.EntityUtils;
 
-import android.content.Context;
+import java.io.File;
+import java.util.Map;
 
 /**
  * HTTP的post请求方式发送。
@@ -42,7 +42,7 @@ import android.content.Context;
  *         "http://rescdn.qqmail.com/zh_CN/htmledition/images/function/qm_open/ico_mailme_01.png"
  *         /></a>
  */
-public class CrashHttpReport extends AbstractCrashReportHandler {
+public class CrashHttpReporter extends AbstractCrashHandler {
     HttpClient httpclient = new DefaultHttpClient();
     private String url;
     private Map<String, String> otherParams;
@@ -53,16 +53,10 @@ public class CrashHttpReport extends AbstractCrashReportHandler {
     private String toParam;
     private HttpReportCallback callback;
 
-    public CrashHttpReport(Context context, String logName) {
-        super(context, logName);
-        httpclient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION,
-                HttpVersion.HTTP_1_1);
-    }
-
-    public CrashHttpReport(Context context) {
+    public CrashHttpReporter(Context context) {
         super(context);
-        httpclient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION,
-                HttpVersion.HTTP_1_1);
+//        httpclient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION,
+//                HttpVersion.HTTP_1_1);
     }
 
     @Override
@@ -91,7 +85,6 @@ public class CrashHttpReport extends AbstractCrashReportHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     public String getUrl() {

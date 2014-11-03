@@ -18,14 +18,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.githang.androidcrash;
+package com.githang.androidcrash.log;
+
+import android.util.Log;
+
+import com.githang.androidcrash.util.AssertUtil;
 
 import java.io.File;
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 崩溃处理者。
@@ -36,44 +36,28 @@ import java.util.concurrent.TimeUnit;
  *         "http://rescdn.qqmail.com/zh_CN/htmledition/images/function/qm_open/ico_mailme_01.png"
  *         /></a>
  */
-public class CrashHandler implements UncaughtExceptionHandler {
-    private static final CrashHandler sHandler = new CrashHandler();
-    private static final UncaughtExceptionHandler sDefaultHandler = Thread
-            .getDefaultUncaughtExceptionHandler();
-    private static final ExecutorService THREAD_POOL = Executors.newSingleThreadExecutor();
-    private Future<?> future;
+public class CrashCatcher implements UncaughtExceptionHandler {
+    private static final String LOG_TAG = CrashCatcher.class.getSimpleName();
+
+    private static final CrashCatcher sHandler = new CrashCatcher();
+
     private CrashListener mListener;
     private File mLogFile;
-    /**
-     * 发送报告的超时时间。
-     */
-    protected int timeout = 5;
 
-    public static CrashHandler getInstance() {
+    public static CrashCatcher getInstance() {
         return sHandler;
     }
 
     @Override
     public void uncaughtException(Thread thread, Throwable ex) {
-        if (future != null && !future.isDone()) {
-            future.cancel(true);
+        try {
+            LogWriter.writeLog(mLogFile, "CrashHandler", ex.getMessage(), ex);
+        }catch (Exception e) {
+            Log.w(LOG_TAG, e);
         }
-        CrashLogUtil.writeLog(mLogFile, "CrashHandler", ex.getMessage(), ex);
-        future = THREAD_POOL.submit(new Runnable() {
-            public void run() {
-                if (mListener != null) {
-                    mListener.afterSaveCrash(mLogFile);
-                }
-            };
-        });
-        if (!future.isDone()) {
-            try {
-                future.get(timeout, TimeUnit.SECONDS);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        sDefaultHandler.uncaughtException(thread, ex);
+
+        mListener.sendFile(mLogFile);
+        mListener.closeApp(thread, ex);
     }
 
     /**
@@ -85,8 +69,9 @@ public class CrashHandler implements UncaughtExceptionHandler {
      *            回调接口
      */
     public void init(File logFile, CrashListener listener) {
+        AssertUtil.assertNotNull("logFile", logFile);
+        AssertUtil.assertNotNull("crashListener", listener);
         mLogFile = logFile;
         mListener = listener;
     }
-
 }

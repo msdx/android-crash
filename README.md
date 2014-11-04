@@ -21,7 +21,7 @@ compile(group: 'com.githang', name: 'android-crash', version: '0.2.2')
 
 2、写一个类，继承自Application，并在AndroidManifest.xml中指定。然后在onCreate方法中添加如下代码：
 
-客户端发送E-mail方式（需要添加activation.jar, additionnal.jar, mail.jar 这三个jar包，可以从本项目的libs文件夹中获取）
+使用E-mail方式，需要添加activation.jar, additionnal.jar, mail.jar 这三个jar包，可以从本项目的libs文件夹中获取。使用HTTP方式则不需要其他依赖库。
 
 ```java
 public class MyApplication extends Application{

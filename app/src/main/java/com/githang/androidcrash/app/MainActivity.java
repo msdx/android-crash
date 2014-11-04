@@ -22,6 +22,12 @@ public class MainActivity extends Activity {
                 throw new NullPointerException("Test");
             }
         });
+        AppManager.addActivity(this);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        AppManager.finishActivity(this);
+    }
 }

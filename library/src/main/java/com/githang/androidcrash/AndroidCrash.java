@@ -1,6 +1,7 @@
 package com.githang.androidcrash;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.githang.androidcrash.log.CrashCatcher;
 import com.githang.androidcrash.reporter.AbstractCrashHandler;
@@ -53,6 +54,7 @@ public class AndroidCrash {
         File logFile = getLogFile(mContext, mLogName);
         CrashCatcher.getInstance().init(logFile, mReporter);
         Thread.setDefaultUncaughtExceptionHandler(CrashCatcher.getInstance());
+        Log.d("AndroidCrash", "init success: " + Thread.getDefaultUncaughtExceptionHandler().getClass());
     }
 
     protected static final File getLogFile(Context context, String name) {

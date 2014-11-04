@@ -21,6 +21,7 @@
 package com.githang.androidcrash.reporter.httpreporter;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.githang.androidcrash.reporter.AbstractCrashHandler;
 
@@ -76,15 +77,23 @@ public class CrashHttpReporter extends AbstractCrashHandler {
             HttpPost req = new HttpPost(url);
             req.setEntity(entity);
             HttpResponse resp = httpclient.execute(req);
+            int statusCode = resp.getStatusLine().getStatusCode();
+            String responseString = EntityUtils.toString(resp.getEntity());
             if (callback != null) {
-                if (callback.isSuccess(resp.getStatusLine().getStatusCode(),
-                        EntityUtils.toString(resp.getEntity()))) {
-                    file.delete();
+                if (callback.isSuccess(statusCode, responseString)) {
+                    deleteLog(file);
                 }
+            } else if(statusCode == 200){
+                deleteLog(file);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void deleteLog(File file) {
+        Log.d("CrashHttpReporter", "delete: " + file.getName());
+        file.delete();
     }
 
     public String getUrl() {
@@ -96,8 +105,9 @@ public class CrashHttpReporter extends AbstractCrashHandler {
      * 
      * @param url
      */
-    public void setUrl(String url) {
+    public CrashHttpReporter setUrl(String url) {
         this.url = url;
+        return this;
     }
 
     public String getTitleParam() {
@@ -109,8 +119,9 @@ public class CrashHttpReporter extends AbstractCrashHandler {
      * 
      * @param titleParam
      */
-    public void setTitleParam(String titleParam) {
+    public CrashHttpReporter setTitleParam(String titleParam) {
         this.titleParam = titleParam;
+        return this;
     }
 
     public String getBodyParam() {
@@ -122,8 +133,9 @@ public class CrashHttpReporter extends AbstractCrashHandler {
      * 
      * @param bodyParam
      */
-    public void setBodyParam(String bodyParam) {
+    public CrashHttpReporter setBodyParam(String bodyParam) {
         this.bodyParam = bodyParam;
+        return this;
     }
 
     public String getFileParam() {
@@ -135,8 +147,9 @@ public class CrashHttpReporter extends AbstractCrashHandler {
      * 
      * @param fileParam
      */
-    public void setFileParam(String fileParam) {
+    public CrashHttpReporter setFileParam(String fileParam) {
         this.fileParam = fileParam;
+        return this;
     }
 
     public Map<String, String> getOtherParams() {
@@ -161,8 +174,9 @@ public class CrashHttpReporter extends AbstractCrashHandler {
      * 
      * @param to
      */
-    public void setTo(String to) {
+    public CrashHttpReporter setTo(String to) {
         this.to = to;
+        return this;
     }
 
     public HttpReportCallback getCallback() {
@@ -174,8 +188,9 @@ public class CrashHttpReporter extends AbstractCrashHandler {
      * 
      * @param callback
      */
-    public void setCallback(HttpReportCallback callback) {
+    public CrashHttpReporter setCallback(HttpReportCallback callback) {
         this.callback = callback;
+        return this;
     }
 
     public String getToParam() {
@@ -187,8 +202,9 @@ public class CrashHttpReporter extends AbstractCrashHandler {
      * 
      * @param toParam
      */
-    public void setToParam(String toParam) {
+    public CrashHttpReporter setToParam(String toParam) {
         this.toParam = toParam;
+        return this;
     }
 
     /**

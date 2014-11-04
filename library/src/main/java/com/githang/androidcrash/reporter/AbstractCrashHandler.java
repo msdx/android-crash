@@ -53,7 +53,7 @@ public abstract class AbstractCrashHandler implements CrashListener {
     private Context mContext;
 
     private ExecutorService mSingleExecutor = Executors.newSingleThreadExecutor();
-    private Future mFuture;
+    protected Future mFuture;
     private int TIMEOUT = 5;
 
     public AbstractCrashHandler(Context context) {

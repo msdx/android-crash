@@ -20,6 +20,7 @@
  */
 package com.githang.androidcrash.log;
 
+import android.os.Looper;
 import android.util.Log;
 
 import com.githang.androidcrash.util.AssertUtil;
@@ -49,7 +50,7 @@ public class CrashCatcher implements UncaughtExceptionHandler {
     }
 
     @Override
-    public void uncaughtException(Thread thread, Throwable ex) {
+    public void uncaughtException(final Thread thread, final Throwable ex) {
         try {
             LogWriter.writeLog(mLogFile, "CrashHandler", ex.getMessage(), ex);
         }catch (Exception e) {
@@ -57,7 +58,18 @@ public class CrashCatcher implements UncaughtExceptionHandler {
         }
 
         mListener.sendFile(mLogFile);
-        mListener.closeApp(thread, ex);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Looper.prepare();
+                try {
+                    mListener.closeApp(thread, ex);
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
+                Looper.loop();
+            }
+        }).start();
     }
 
     /**

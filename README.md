@@ -24,8 +24,6 @@ compile(group: 'com.githang', name: 'android-crash', version: '0.2.2')
 使用E-mail方式，需要添加activation.jar, additionnal.jar, mail.jar 这三个jar包，可以从本项目的libs文件夹中获取。使用HTTP方式则不需要其他依赖库。
 
 ```java
-public class MyApplication extends Application{
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -40,7 +38,7 @@ public class MyApplication extends Application{
         CrashEmailReporter reporter = new CrashEmailReporter(this);
         reporter.setReceiver("admin@githang.com");
         reporter.setSender("irain_log@163.com");
-        reporter.setSendPassword("irain_log17935");
+        reporter.setSendPassword("xxxxxxxx");
         reporter.setSMTPHost("smtp.163.com");
         reporter.setPort("465");
         AndroidCrash.getInstance().setCrashReporter(reporter).init(this);
@@ -51,6 +49,11 @@ public class MyApplication extends Application{
      */
     private void initHttpReporter() {
         CrashHttpReporter reporter = new CrashHttpReporter(this) {
+            /**
+             * 重写此方法，可以弹出自定义的崩溃提示对话框，而不使用系统的崩溃处理。
+             * @param thread
+             * @param ex
+             */
             @Override
             public void closeApp(Thread thread, Throwable ex) {
                 final Activity activity = AppManager.currentActivity();
@@ -78,6 +81,5 @@ public class MyApplication extends Application{
         });
         AndroidCrash.getInstance().setCrashReporter(reporter).init(this);
     }
-}
 
 ```

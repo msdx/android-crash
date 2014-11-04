@@ -33,7 +33,7 @@ public class MyApplication extends Application{
         CrashEmailReporter reporter = new CrashEmailReporter(this);
         reporter.setReceiver("admin@githang.com");
         reporter.setSender("irain_log@163.com");
-        reporter.setSendPassword("irain_log17935");
+        reporter.setSendPassword("xxxxxxxx");
         reporter.setSMTPHost("smtp.163.com");
         reporter.setPort("465");
         AndroidCrash.getInstance().setCrashReporter(reporter).init(this);

@@ -26,6 +26,9 @@ public class MyApplication extends Application{
         initHttpReporter();
     }
 
+    /**
+     * 使用EMAIL发送日志
+     */
     private void initEmailReporter() {
         CrashEmailReporter reporter = new CrashEmailReporter(this);
         reporter.setReceiver("admin@githang.com");
@@ -36,12 +39,21 @@ public class MyApplication extends Application{
         AndroidCrash.getInstance().setCrashReporter(reporter).init(this);
     }
 
+    /**
+     * 使用HTTP发送日志
+     */
     private void initHttpReporter() {
         CrashHttpReporter reporter = new CrashHttpReporter(this) {
+            /**
+             * 重写此方法，可以弹出自定义的崩溃提示对话框，而不使用系统的崩溃处理。
+             * @param thread
+             * @param ex
+             */
             @Override
             public void closeApp(Thread thread, Throwable ex) {
                 final Activity activity = AppManager.currentActivity();
                 Toast.makeText(activity, "发生异常，正在退出", Toast.LENGTH_SHORT).show();
+                // 自定义弹出对话框
                 new AlertDialog.Builder(activity).
                         setMessage("程序发生异常，现在退出").
                         setPositiveButton("确定", new DialogInterface.OnClickListener() {

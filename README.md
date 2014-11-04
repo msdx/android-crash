@@ -24,31 +24,60 @@ compile(group: 'com.githang', name: 'android-crash', version: '0.2.2')
 客户端发送E-mail方式（需要添加activation.jar, additionnal.jar, mail.jar 这三个jar包，可以从本项目的libs文件夹中获取）
 
 ```java
+public class MyApplication extends Application{
 
-    CrashEmailReport report = new CrashEmailReport(this);
-    report.setReceiver("log@msdx.pw");
-    report.setSender("irain_log@163.com");
-    report.setSendPassword("xxxxxxxx");
-    report.setHost("smtp.163.com");
-    report.setPort("465");
-    report.start();
-```
+    @Override
+    public void onCreate() {
+        super.onCreate();
 
-Http post请求的方式：
-```java
+        initHttpReporter();
+    }
 
-	CrashHttpReport report = new CrashHttpReport(this);
-	report.setUrl("http://crashreport.jd-app.com/ReportFile");
-	report.setTo("log@msdx.pw");
-	report.setToParam("to");
-	report.setTitleParam("subject");
-	report.setBodyParam("message");
-	report.setFileParam("fileName");
-	report.setCallback(new CrashHttpReport.HttpReportCallback() {
+    /**
+     * 使用EMAIL发送日志
+     */
+    private void initEmailReporter() {
+        CrashEmailReporter reporter = new CrashEmailReporter(this);
+        reporter.setReceiver("admin@githang.com");
+        reporter.setSender("irain_log@163.com");
+        reporter.setSendPassword("irain_log17935");
+        reporter.setSMTPHost("smtp.163.com");
+        reporter.setPort("465");
+        AndroidCrash.getInstance().setCrashReporter(reporter).init(this);
+    }
+
+    /**
+     * 使用HTTP发送日志
+     */
+    private void initHttpReporter() {
+        CrashHttpReporter reporter = new CrashHttpReporter(this) {
             @Override
-            boolean isSuccess(int i, String s) {
-                return s.endsWith("ok")
+            public void closeApp(Thread thread, Throwable ex) {
+                final Activity activity = AppManager.currentActivity();
+                Toast.makeText(activity, "发生异常，正在退出", Toast.LENGTH_SHORT).show();
+                // 自定义弹出对话框
+                new AlertDialog.Builder(activity).
+                        setMessage("程序发生异常，现在退出").
+                        setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        AppManager.AppExit(activity);
+                    }
+                }).create().show();
+                Log.d("MyApplication", "thead:" + Thread.currentThread().getName());
+            }
+        };
+        reporter.setUrl("http://crashreport.jd-app.com/ReportFile").setFileParam("fileName")
+                .setToParam("to").setTo("admin@githang.com")
+                .setTitleParam("subject").setBodyParam("message");
+        reporter.setCallback(new CrashHttpReporter.HttpReportCallback() {
+            @Override
+            public boolean isSuccess(int i, String s) {
+                return s.endsWith("ok");
             }
         });
-	report.start();
+        AndroidCrash.getInstance().setCrashReporter(reporter).init(this);
+    }
+}
+
 ```

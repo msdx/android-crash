@@ -36,7 +36,7 @@ compile(group: 'com.githang', name: 'android-crash', version: '0.2.2')
      */
     private void initEmailReporter() {
         CrashEmailReporter reporter = new CrashEmailReporter(this);
-        reporter.setReceiver("admin@githang.com");
+        reporter.setReceiver("receiver@your.email");
         reporter.setSender("irain_log@163.com");
         reporter.setSendPassword("xxxxxxxx");
         reporter.setSMTPHost("smtp.163.com");

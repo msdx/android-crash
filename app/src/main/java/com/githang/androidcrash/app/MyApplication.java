@@ -31,8 +31,8 @@ public class MyApplication extends Application{
      */
     private void initEmailReporter() {
         CrashEmailReporter reporter = new CrashEmailReporter(this);
-        reporter.setReceiver("admin@githang.com");
-        reporter.setSender("irain_log@163.com");
+        reporter.setReceiver("你的接收邮箱");
+        reporter.setSender("你的发送邮箱");
         reporter.setSendPassword("xxxxxxxx");
         reporter.setSMTPHost("smtp.163.com");
         reporter.setPort("465");
@@ -65,8 +65,8 @@ public class MyApplication extends Application{
                 Log.d("MyApplication", "thead:" + Thread.currentThread().getName());
             }
         };
-        reporter.setUrl("http://crashreport.jd-app.com/ReportFile").setFileParam("fileName")
-                .setToParam("to").setTo("admin@githang.com")
+        reporter.setUrl("接收你请求的API").setFileParam("fileName")
+                .setToParam("to").setTo("你的接收邮箱")
                 .setTitleParam("subject").setBodyParam("message");
         reporter.setCallback(new CrashHttpReporter.HttpReportCallback() {
             @Override

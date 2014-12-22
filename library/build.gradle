@@ -1,4 +1,18 @@
+group = 'com.githang'
+version= 1.0
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.0'
+    }
+}
+
 apply plugin: 'com.android.library'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven-publish'
 
 android {
     compileSdkVersion 21
@@ -7,8 +21,6 @@ android {
     defaultConfig {
         minSdkVersion 8
         targetSdkVersion 21
-        versionCode 4
-        versionName "0.2.2"
     }
     buildTypes {
         release {
@@ -19,8 +31,102 @@ android {
     lintOptions {
         abortOnError false
     }
+
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+
+task androidJavadocs(type: Javadoc) {
+    source = android.sourceSets.main.java
+}
+
+task androidJavadocsJar(type: Jar) {
+    classifier = 'javadoc'
+    from androidJavadocs.destinationDir
+}
+
+task coreLibJar(type: Jar) {
+    from fileTree(dir: './build/intermediates/classes/release')
+            .exclude ("com/githang/androidcrash/R.class",
+                    "com/githang/androidcrash/R\$*.class",
+                    "com/githang/androidcrash/BuildConfig.class"
+            )
+}
+
+task androidSourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+
+artifacts {
+    archives androidSourcesJar
+}
+
+def pomConfig = {
+    licenses {
+        license {
+            name "The Apache Software License, Version 2.0"
+            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            distribution "repo"
+        }
+    }
+    developers {
+        developer {
+            id "msdx"
+            name "Geek_Soledad"
+            email "msdx.android@qq.com"
+        }
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId 'android-crash'
+            artifact androidSourcesJar
+            artifact androidJavadocsJar
+            artifact coreLibJar
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', 'An android crash handler.')
+                root.children().last() + pomConfig
+            }
+        }
+    }
+}
+
+bintray {
+    user = bintrayUser
+    key = bintrayKey
+
+    publications = ['mavenJava'] //When uploading Maven-based publication files
+    // - AND/OR -
+    filesSpec { //When uploading any arbitrary files ('filesSpec' is a standard Gradle CopySpec)
+        from 'arbitrary-files'
+        into 'standalone_files/level1'
+        rename '(.+)\\.(.+)', '$1-suffix.$2'
+    }
+    dryRun = false //Whether to run this as dry-run, without deploying
+    publish = true //If version should be auto published after an upload
+    pkg {
+        repo = 'maven'
+        //     userOrg = 'myorg' //An optional organization name when the repo belongs to one of the user's orgs
+        name = 'android-crash'
+        desc = 'what a fantastic package indeed!'
+        websiteUrl = 'https://github.com/msdx/android-crash'
+        issueTrackerUrl = 'https://github.com/msdx/android-crash/issues'
+        vcsUrl = 'https://github.com/msdx/android-crash.git'
+        licenses = ['Apache-2.0']
+        //   labels = ['gear', 'gore', 'gorilla']
+        publicDownloadNumbers = true
+        //attributes= ['a': ['ay1', 'ay2'], 'b': ['bee'], c: 'cee'] //Optional package-level attributes
+        //Optional version descriptor
+        version {
+            name = project.version //Bintray logical version name
+            vcsTag = project.version
+        }
+    }
 }

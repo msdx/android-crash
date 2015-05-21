@@ -16,7 +16,7 @@ repository {
 在dependencies中添加如下依赖。
 ```groovy
 
-compile(group: 'com.githang', name: 'android-crash', version: '0.2.2')
+compile 'com.githang:android-crash:1.0'
 ```
 
 2、写一个类，继承自Application，并在AndroidManifest.xml中指定。然后在onCreate方法中添加如下代码：
